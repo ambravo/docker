@@ -1,0 +1,35 @@
+version: '3.9'
+services:
+    amba-odoo:
+        container_name: amba-odoo
+        image: amba/odoo:16.0
+        volumes:
+            - ./addons-extra:/mnt/extra-addons
+            - ./odoo/config/odoo:/etc/odoo
+            - odoo-web-data:/var/lib/odoo
+        ports:
+            - "8069:8069"
+        depends_on:
+            - amba-postgres
+    amba-postgres:
+        image: postgres:15
+        environment:
+            - POSTGRES_DB=postgres
+            - POSTGRES_PASSWORD=odoo
+            - POSTGRES_USER=odoo
+            - PGDATA=/var/lib/postgresql/data/pgdata
+        volumes:
+            - odoo-db-data:/var/lib/postgresql/data/pgdata
+volumes:
+    odoo-web-data:
+      driver: local
+      driver_opts:
+        type: "none"
+        o: "bind"
+        device: "./odoo/volumes/odoo-web-data"    
+    odoo-db-data:
+      driver: local
+      driver_opts:
+        type: "none"
+        o: "bind"
+        device: "./odoo/volumes/odoo-db-data"     
